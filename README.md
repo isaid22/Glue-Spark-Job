@@ -9,7 +9,7 @@ Too much data is collected to the driver (e.g., using collect(), toPandas(), or 
 Or, inefficient partitioning causes the driver to orchestrate too much without distributing work properly across executors.
 
 ✅ Fixes & Best Practices
-1. Avoid collecting data to the driver
+## 1. Avoid collecting data to the driver
 Make sure you’re not doing anything like this:
 
 ```
@@ -18,7 +18,7 @@ df.collect()  # BAD: brings all data to the driver
 ```
 Instead, rely on Spark transformations and foreachPartition or mapPartitions for actions.
 
-2. Use foreachPartition to write to DynamoDB
+## 2. Use foreachPartition to write to DynamoDB
 DynamoDB write logic should not happen in the driver. Instead, use a function like:
 
 ```
@@ -40,7 +40,7 @@ df.foreachPartition(write_to_dynamodb)
 ```
 ⚠️ You must ensure that your Glue job has proper IAM permissions to write to DynamoDB.
 
-3. Optimize Partitions
+## 3. Optimize Partitions
 You don’t want huge partitions (which can OOM a worker), but also not too many tiny ones.
 
 ```
@@ -51,7 +51,7 @@ You can also repartition based on a column, e.g.,
 repartition("customer_id").
 ```
 
-4. Use Sufficient Worker Memory
+## 4. Use Sufficient Worker Memory
 Glue DynamicFrame jobs have options for setting worker types and numbers:
 
 G.1X: 4 vCPUs, 16 GB memory
@@ -69,7 +69,7 @@ Worker type: use G.2X
 
 Number of workers: estimate based on data size (~200 GB → ~40-50 workers for large writes)
 
-5. Tune Spark Config (Optional)
+## 5. Tune Spark Config (Optional)
 You can set Glue job parameters like:
 
 ```
